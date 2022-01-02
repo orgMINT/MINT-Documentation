@@ -1207,7 +1207,6 @@ Mint is a bytecode interpreter - this means that all of its instructions are 1 b
 | /      | 16-bit by 8-bit division DIV              | a b -- c |
 | \_     | 16-bit negation (2's complement) NEG      | a -- b   |
 | \*     | 8-bit by 8-bit integer multiplication MUL | a b -- c |
-| \\\_   | sign of number                            | n -- b   |
 | \>     | 16-bit comparison GT                      | a b -- c |
 | +      | 16-bit integer addition ADD               | a b -- c |
 | <      | 16-bit comparison LT                      | a b -- c |
@@ -1274,7 +1273,6 @@ NOTE:
 | \\(    | beginIFTE \\(`true`)(`false`)                     | b --   |
 | \\B    | if true break out of loop                         | b --   |
 | \\i    | loop counter variable                             | -- adr |
-| \\j    | outer loop counter variable                       | -- adr |
 
 ### Memory and Variable Operations
 
@@ -1287,7 +1285,6 @@ NOTE:
 | \\!    | STORE a byte to memory                      | val adr --    |
 | \\[    | begin a byte array definition               | --            |
 | \\@    | FETCH a byte from memory                    | -- val        |
-| \\+    | increments variable at address by an amount | val adr --    |
 
 ### System Variables
 
@@ -1299,7 +1296,6 @@ NOTE:
 | \\d    | start of user definitions            | -- adr |
 | \\h    | heap pointer variable                | -- adr |
 | \\i    | See: Loops and conditional execution | -- adr |
-| \\j    | See: Loops and conditional execution | -- adr |
 
 ### Miscellaneous
 
