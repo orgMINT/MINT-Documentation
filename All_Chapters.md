@@ -79,10 +79,10 @@ Decimal numbers between 0 and 65535 are accepted, and printout is always in the 
 ### Printing Text
 
 Most computer languages are demonstrated by printing the text string `Hello World` on the terminal display. MINT is no exception, and it is very simple to print text to the screen. Anything enclosed between back ticks `text` will be printed
-`\N` is the way in which we send a _NEWLINE_ character to the terminal.
+`\$` is the way in which we send a _NEWLINE_ character to the terminal.
 
 ```
-`Hello World` \N   <ENTER>
+`Hello World` \$   <ENTER>
 Hello World
 >
 ```
@@ -612,10 +612,10 @@ Between the COLON and the SEMICOLON you may enter virtually any legitimate seque
 Here are a few examples:
 
 ```
-:W`Hello World ` \N;
+:W`Hello World ` \$;
 ```
 
-This prints the string Hello World that is contained between the back ticks and ads a NEWLINE character at the end using \N
+This prints the string Hello World that is contained between the back ticks and ads a NEWLINE character at the end using \$
 
 If you type W four times it will print Hello World 4 times
 
@@ -753,7 +753,7 @@ We have looked at conditional code execution based on the condition placed befor
 But for LOOPS we want thing to execute many times. Fortunately MINT builds upon the conditional code mechanism to build an intuitive LOOP structure. We just need to increase the value that we place outside of the opening parentheses.
 
 ```
-> 5(`This will print Hello World 5 times ` \N ) <ENTER>
+> 5(`This will print Hello World 5 times ` \$ ) <ENTER>
 This will print Hello World 5 times
 This will print Hello World 5 times
 This will print Hello World 5 times
@@ -767,7 +767,7 @@ LOOPS are a key structure of any programming language.
 Inside the LOOP is a control variable known as the loop variable `i`. In the above example `i` starts at 5 and terminates the LOOP when it reaches zero. We can print out `i` during the loop, if you remember the old song "Ten Green Bottles":
 
 ```
-> 10(\i@.` Green Bottles ` \N) <ENTER>
+> 10(\i@.` Green Bottles ` \$) <ENTER>
 00000  Green Bottles
 00001  Green Bottles
 00002  Green Bottles
@@ -790,7 +790,7 @@ The construct `\i@` is a means to push the `i` variable onto the stack and `\i@.
 We can create a very long loop, with up to 65525 iterations:
 
 ```
-65535(\i@.\N) <ENTER>
+65535(\i@.\$) <ENTER>
 ```
 
 This will print out all the decimal numbers between 0 and 65534 and will take many seconds to complete depending on the baud rate of your serial terminal interface.
@@ -1214,12 +1214,11 @@ Mint is a bytecode interpreter - this means that all of its instructions are 1 b
 
 ### Logical Operators
 
-| Symbol | Description                  | Effect   |
-| ------ | ---------------------------- | -------- |
-| \|     | 16-bit bitwise OR            | a b -- c |
-| &      | 16-bit bitwise AND           | a b -- c |
-| ^      | 16-bit bitwise XOR           | a b -- c |
-| ~      | 16-bit bitwise inversion INV | a -- b   |
+| Symbol | Description        | Effect   |
+| ------ | ------------------ | -------- |
+| \|     | 16-bit bitwise OR  | a b -- c |
+| &      | 16-bit bitwise AND | a b -- c |
+| ^      | 16-bit bitwise XOR | a b -- c |
 
 Note: logical NOT can be achieved with 0=
 
@@ -1229,8 +1228,7 @@ Note: logical NOT can be achieved with 0=
 | ------ | -------------------------------------------------------------------- | -------------- |
 | '      | drop the top member of the stack DROP                                | a a -- a       |
 | "      | duplicate the top member of the stack DUP                            | a -- a a       |
-| \\D    | returns the depth of the stack                                       | -- n           |
-| \\R    | rotate the top 2 members of the stack ROT                            | a b c -- b c a |
+| ~      | rotate the top 2 members of the stack ROT                            | a b c -- b c a |
 | %      | over - take the 2nd member of the stack and copy to top of the stack | a b -- a b a   |
 | $      | swap the top 2 members of the stack SWAP                             | a b -- b a     |
 
@@ -1238,31 +1236,33 @@ Note: logical NOT can be achieved with 0=
 
 | Symbol | Description                                               | Effect      |
 | ------ | --------------------------------------------------------- | ----------- |
-| ,      | print the number on the stack as a hexadecimal            | a --        |
+| ?      | read a char from input                                    | -- val      |
 | .      | print the top member of the stack as a decimal number DOT | a --        |
-| \\E    | emits a char to output                                    | val --      |
-| \\I    | input from a I/O port                                     | port -- val |
-| \\K    | read a char from input                                    | -- val      |
-| \\N    | prints a CRLF to output                                   | --          |
-| \\O    | output to an I/O port                                     | val port -- |
-| \\P    | non-destructively prints stack                            | --          |
-| \\Z    | print definition by number                                | n --        |
+| ,      | print the number on the stack as a hexadecimal            | a --        |
 | \`     | print the literal string between \` and \`                | --          |
+| \\.    | print a null terminated string                            | adr --      |
+| \\,    | prints a character to output                              | val --      |
+| \\$    | prints a CRLF to output                                   | --          |
+| \\>    | output to an I/O port                                     | val port -- |
+| \\<    | input from a I/O port                                     | port -- val |
 | #      | the following number is in hexadecimal                    | a --        |
 
-### User Definitions
+### User Defined Commands
 
-| Symbol  | Description                | Effect |
-| ------- | -------------------------- | ------ |
-| ;       | end of user definition END |        |
-| :<CHAR> | define a new word DEF      |        |
-| ?<CHAR> | get the address of the def | -- adr |
-| \{      | enter group NUM            | num -- |
-| \}      | exit group                 | --     |
+| Symbol        | Description                      | Effect   |
+| ------------- | -------------------------------- | -------- |
+| ;             | end of user definition END       |          |
+| :<CHAR>       | define a new command DEF         |          |
+| \\:           | define an anonynous command DEF  |          |
+| \\?<CHAR>     | get the address of the def       | -- adr   |
+| \\{<NUM>      | enter namespace NUM              | --       |
+| \\}           | exit namespace                   | --       |
+| \\<NUM><CHAR> | execute a command in a namespace | --       |
+| \\^           | execute mint code at address     | adr -- ? |
 
 NOTE:
 <CHAR> is an uppercase letter immediately following operation which is the name of the definition
-<NUM> is the group number. There are currently 5 groups numbered 0 - 4
+<NUM> is the namespace number. There are currently 5 namespaces numbered 0 - 4
 
 ### Loops and conditional execution
 
@@ -1271,40 +1271,50 @@ NOTE:
 | (      | BEGIN a loop or conditionally executed code block | n --   |
 | )      | END a loop or conditionally executed code block   | --     |
 | \\(    | beginIFTE \\(`true`)(`false`)                     | b --   |
-| \\B    | if true break out of loop                         | b --   |
-| \\i    | loop counter variable                             | -- adr |
+| \\\_   | if true break out of loop                         | b --   |
 
 ### Memory and Variable Operations
 
-| Symbol | Description                                 | Effect        |
-| ------ | ------------------------------------------- | ------------- |
-| !      | STORE a value to memory                     | val adr --    |
-| [      | begin an array definition                   | --            |
-| ]      | end an array definition                     | -- adr nwords |
-| @      | FETCH a value from memory                   | -- val        |
-| \\!    | STORE a byte to memory                      | val adr --    |
-| \\[    | begin a byte array definition               | --            |
-| \\@    | FETCH a byte from memory                    | -- val        |
+| Symbol | Description                   | Effect        |
+| ------ | ----------------------------- | ------------- |
+| !      | STORE a value to memory       | val adr --    |
+| [      | begin an array definition     | --            |
+| ]      | end an array definition       | -- adr nwords |
+| @      | FETCH a value from memory     | -- val        |
+| \\!    | STORE a byte to memory        | val adr --    |
+| \\[    | begin a byte array definition | --            |
+| \\`    | begin a string definition     | -- adr        |
+| \\@    | FETCH a byte from memory      | -- val        |
 
 ### System Variables
 
-| Symbol | Description                          | Effect |
-| ------ | ------------------------------------ | ------ |
-| \\a    | data stack start variable            | -- adr |
-| \\b    | base16 flag variable                 | -- adr |
-| \\c    | text input buffer pointer variable   | -- adr |
-| \\d    | start of user definitions            | -- adr |
-| \\h    | heap pointer variable                | -- adr |
-| \\i    | See: Loops and conditional execution | -- adr |
+| Symbol | Description                        | Effect |
+| ------ | ---------------------------------- | ------ |
+| \\a    | data stack start variable          | -- adr |
+| \\b    | base16 flag variable               | -- adr |
+| \\c    | text input buffer pointer variable | -- adr |
+| \\d    | start of user definitions          | -- adr |
+| \\h    | heap pointer variable              | -- adr |
+| \\i    | loop counter variable              | -- adr |
+| \\j    | outer loop counter variable        | -- adr |
 
 ### Miscellaneous
 
-| Symbol | Description                                   | Effect   |
-| ------ | --------------------------------------------- | -------- |
-| \\\\   | comment text, skips reading until end of line | --       |
-| \\G    | execute mint code at address                  | adr -- ? |
-| \\Q    | quits from Mint interpreter                   | --       |
-| \\X    | execute machine code at address               | adr -- ? |
+| Symbol | Description                                   | Effect |
+| ------ | --------------------------------------------- | ------ |
+| \\\\   | comment text, skips reading until end of line | --     |
+
+### Utility commands
+
+| Symbol | Description                     | Effect   |
+| ------ | ------------------------------- | -------- |
+| \\#0   | execute machine code at address | adr -- ? |
+| \\#1   | push to return stack            | val --   |
+| \\#2   | pop from return stack           | -- val   |
+| \\#3   | stack depth                     | -- val   |
+| \\#4   | print stack                     | --       |
+| \\#5   | print prompt                    | --       |
+| \\#6   | edit command                    | val --   |
 
 ### Control keys
 
